@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,31 +9,35 @@
   </head>
   <body>
     <div id="app">
-      <div class="doors">
-        <div class="door">
-          <div class="boxes">
-            <!-- <div class="box">?</div> -->
+      <img style="    position: absolute;
+      z-index: 1;
+      top: calc(50% - 210px);"  src="/bg.png" width="510px" class="background">
+      </img>
+        <div style="position: relative;
+        z-index: 9999;" class="doors">
+          <div class="door">
+            <div class="boxes">
+              <!-- <div class="box">?</div> -->
+            </div>
           </div>
-        </div>
 
-        <div class="door">
-          <div class="boxes">
-            <!-- <div class="box">?</div> -->
+          <div class="door">
+            <div class="boxes">
+              <!-- <div class="box">?</div> -->
+            </div>
           </div>
-        </div>
 
-        <div class="door">
-          <div class="boxes">
-            <!-- <div class="box">?</div> -->
+          <div class="door">
+            <div class="boxes">
+              <!-- <div class="box">?</div> -->
+            </div>
+          </div>
+          <div class="door">
+            <div class="boxes">
+              <!-- <div class="box">?</div> -->
+            </div>
           </div>
         </div>
-        <div class="door">
-          <div class="boxes">
-            <!-- <div class="box">?</div> -->
-          </div>
-        </div>
-      </div>
-
       <div class="buttons">
         <button id="spinner">Play</button>
         <button id="reseter">Reset</button>
@@ -40,6 +45,7 @@
     </div>
   </body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
   (function () {
     const items = [
@@ -54,18 +60,21 @@
 
     document.querySelector("#spinner").addEventListener("click", spin);
     document.querySelector("#reseter").addEventListener("click", init);
+    const bg = document.querySelector(".background");
 
-    function init(firstInit = true, groups = 1, duration = 1) {
+    function init(firstInit = true, groups = 1, duration = 1000) {
+      bg.setAttribute("src", "./bg.png");
+      let i = 0
       for (const door of doors) {
-        if (firstInit) {
-          door.dataset.spinned = "0";
-        } else if (door.dataset.spinned === "1") {
-          return;
-        }
+        // if (firstInit) {
+        //   door.dataset.spinned = "0";
+        // } else if (door.dataset.spinned === "1") {
+        //   return;
+        // }
 
         const boxes = door.querySelector(".boxes");
         const boxesClone = boxes.cloneNode(false);
-        const pool = ["❓"];
+        const pool = ['<img src="./1.png" width= "105px" alt="" />'];
 
         if (!firstInit) {
           const arr = [];
@@ -73,12 +82,11 @@
             arr.push(...items);
           }
           pool.push(...shuffle(arr));
-          console.log(pool, "pool");
 
           boxesClone.addEventListener(
             "transitionstart",
             function () {
-              door.dataset.spinned = "1";
+              // door.dataset.spinned = "1";
               this.querySelectorAll(".box").forEach((box) => {
                 box.style.filter = "blur(1px)";
               });
@@ -104,29 +112,34 @@
           box.style.width = door.clientWidth + "px";
           box.style.height = door.clientHeight + "px";
           box.innerHTML = pool[i];
-          console.log(pool.length);
-          // if (pool[i]) {
-          // } else {
-          //   box.innerHTML = items[1];
-          // }
           boxesClone.appendChild(box);
         }
+        
         boxesClone.style.transitionDuration = `${duration > 0 ? duration : 1}s`;
         boxesClone.style.transform = `translateY(-${
           door.clientHeight * (pool.length - 1)
         }px)`;
         door.replaceChild(boxesClone, boxes);
+        console.log(duration, "duration");
+        // set thời gian chuyển background
+        if(duration > 1){
+          setTimeout(() => {
+            bg.setAttribute("src", "./bg2.png");
+          },duration*1000)
+        }
       }
     }
 
     async function spin() {
       init(false, 5, 5);
-
+      let i = 0
       for (const door of doors) {
+        i++
         const boxes = door.querySelector(".boxes");
         const duration = parseInt(boxes.style.transitionDuration);
         boxes.style.transform = "translateY(0)";
         await new Promise((resolve) => setTimeout(resolve, 100));
+
       }
     }
 
@@ -134,12 +147,90 @@
       let m = arr.length;
       while (m) {
         const i = Math.floor(Math.random() * m--);
-        console.log(i);
         [arr[m], arr[i]] = [arr[i], arr[m]];
       }
       return arr;
     }
-
     init();
   })();
+</script>
+
+<script>
+  // setInterval(() => {
+  //   document.querySelector("#spinner").click();
+  // }, 10000);
+</script>
+<script>
+  // get token
+  var token = "";
+  let connectionToken = "";
+  const apiUrl = "https://portal.dichvugamebai.com/api/Account/Login";
+  const params = {
+    LoginType: "1",
+    UserName: "taking103",
+    Password: "123456a",
+    DeviceId: "1",
+    DeviceType: "1",
+  };
+  // Sử dụng Axios để gửi yêu cầu GET
+  axios
+    .post(apiUrl, params)
+    .then((response) => {
+      token = response.data.Token;
+      const apiGetConnectionToken =
+        "https://chat.dichvugamebai.com/signalr/negotiate";
+      axios
+        .get(apiGetConnectionToken, { access_token: token })
+        .then((res) => {
+          connectionToken = res.data.ConnectionToken;
+          console.log(connectionToken);
+          const listChats = document.querySelector(".list-chats");
+          let wss =
+            "wss://chat.dichvugamebai.com/signalr/connect?transport=webSockets&connectionToken=" +
+            encodeURIComponent(connectionToken) +
+            "&connectionData=[{%27name%27:%27chatHub%27}]&tid=19&access_token=" +
+            token;
+          const socket = new WebSocket(wss);
+          socket.onopen = () => {
+            // Kết nối thành công
+            console.log("Kết nối thành công");
+            socket.send(
+              JSON.stringify({
+                M: "RegisterChat",
+                A: ["xocdialive", 3],
+                H: "chatHub",
+                I: 0,
+              })
+            );
+          };
+          socket.onmessage = (event) => {
+            // Nhận dữ liệu từ server
+            let data = JSON.parse(event.data);
+            if (
+              data.M &&
+              Array.isArray(data.M) &&
+              data.M[0] &&
+              data.M[0].M == "jackpotInfor"
+            ) {
+              console.log(data.M[0].A[1], "jackpotInfor");
+            }
+          };
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+</script>
+
+
+<!-- test -->
+<script>
+let arr = [-1, 1, 2, 3, 4, 5, 6];
+let randomValue = arr[Math.floor(Math.random() * arr.length)];
+setTimeout(() => {
+  
+}, 5000);
 </script>

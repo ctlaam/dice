@@ -20,17 +20,16 @@ body {
 }
 
 .door {
-  background: #fafafa;
-  width: 96px;
-  height: 100px;
+  width: 100px;
+  height: 120px;
   overflow: hidden;
   border-radius: 5px;
-  margin: 5px;
+  margin: 0 13px;
 }
 
 .boxes {
   /* transform: translateY(0); */
-  transition: transform 1s ease-in-out;
+  transition: transform 1s ease-out;
 }
 
 .box {
@@ -42,6 +41,8 @@ body {
 
 .buttons {
   margin: 1rem 0 2rem 0;
+  position: relative;
+  top: 200px;
 }
 
 button {
@@ -61,4 +62,8 @@ button {
 }
 .box.ahihi {
   background-image: url("paper.gif");
+}
+
+.background {
+  background-image: url("bg.png");
 }
