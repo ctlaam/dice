@@ -9,12 +9,11 @@
   </head>
   <body>
     <div id="app">
-      <img style="    position: absolute;
-      z-index: 1;
-      top: calc(50% - 210px);"  src="/bg.png" width="510px" class="background">
+      <img style="position: relative;"  src="/bg.png" height="100vh" class="background">
       </img>
-        <div style="position: relative;
-        z-index: 9999;" class="doors">
+        <div style="position: absolute;
+        z-index: 9999;    top: calc(50% - 50px);
+" class="doors">
           <div class="door">
             <div class="boxes">
               <!-- <div class="box">?</div> -->
@@ -43,7 +42,7 @@
             </div>
           </div>
         </div>
-      <div class="buttons">
+      <div style="position: fixed;" class="buttons">
         <button id="spinner">Play</button>
         <button id="reseter">Reset</button>
       </div>
@@ -54,32 +53,25 @@
 <script>
   (function () {
     const items = [
-      '<img src="./1.png" width= "105px" alt="" />',
-      '<img src="./2.png" width= "105px" alt="" />',
-      '<img src="./3.png" width= "105px" alt="" />',
-      '<img src="./4.png" width= "105px" alt="" />',
-      '<img src="./5.png" width= "105px" alt="" />',
-      '<img src="./6.png" width= "105px" alt="" />',
+      '<img src="./1.png" width= "200px" alt="" />',
+      '<img src="./2.png" width= "200px" alt="" />',
+      '<img src="./3.png" width= "200px" alt="" />',
+      '<img src="./4.png" width= "200px" alt="" />',
+      '<img src="./5.png" width= "200px" alt="" />',
+      '<img src="./6.png" width= "200px" alt="" />',
     ];
     const doors = document.querySelectorAll(".door");
-
+    let isGetData = false;
     document.querySelector("#spinner").addEventListener("click", spin);
     document.querySelector("#reseter").addEventListener("click", init);
     const bg = document.querySelector(".background");
-
-    function init(firstInit = true, groups = 1, duration = 1000,randomValue=-1) {
-      bg.setAttribute("src", "./bg.png");
+    function init(firstInit = true, groups = 1, duration = 1000,randomValue=-1,setBg = false) {
+      bg.setAttribute("src", "./bg2.png");
       let i = 0
       for (const door of doors) {
-        // if (firstInit) {
-        //   door.dataset.spinned = "0";
-        // } else if (door.dataset.spinned === "1") {
-        //   return;
-        // }
-
         const boxes = door.querySelector(".boxes");
         const boxesClone = boxes.cloneNode(false);
-        const pool = ['<img src="./1.png" width= "105px" alt="" />'];
+        const pool = ['<img src="./1.png" width= "200px" alt="" />'];
 
         if (!firstInit) {
           const arr = [];
@@ -87,10 +79,9 @@
             arr.push(...items);
           }
           pool.push(...shuffle(arr));
-          if(randomValue != -1){
-            pool[30] = `<img src="./${randomValue}.png" width= "105px" alt="" />` 
+          if(randomValue && randomValue != -1){
+            pool[groups * items.length] = `<img src="./${randomValue}.png" width= "200px" alt="" />` 
           }
-          console.log(pool, 'pool');
 
           boxesClone.addEventListener(
             "transitionstart",
@@ -122,36 +113,35 @@
           box.style.height = door.clientHeight + "px";
           box.innerHTML = pool[i];
           boxesClone.appendChild(box);
-        }
-        
+        }  
         boxesClone.style.transitionDuration = `${duration > 0 ? duration : 1}s`;
         boxesClone.style.transform = `translateY(-${
           door.clientHeight * (pool.length - 1)
         }px)`;
         door.replaceChild(boxesClone, boxes);
-        console.log(duration, "duration");
-        // set thời gian chuyển background
-        if(duration > 1){
-          setTimeout(() => {
-            bg.setAttribute("src", "./bg2.png");
-          },duration*1000)
-        }
       }
     }
-
-    async function spin() {
-      init(false, 50, 50);
-      let i = 0
+    let isSpining = 1
+    let valueGlobal = -1
+    async function spin(value = - 1) {
+      init(false, 30, 20,false);
       for (const door of doors) {
-        i++
-        const boxes = door.querySelector(".boxes");
-        const duration = parseInt(boxes.style.transitionDuration);
-        boxes.style.transform = "translateY(0)";
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
+          const boxes = door.querySelector(".boxes");
+          const duration = parseInt(boxes.style.transitionDuration);
+          boxes.style.transform = "translateY(0)";
+          new Promise((resolve) => setTimeout(resolve, 100));
       }
+      let clear = setInterval(()=> {
+        if(!isGetData) {
+          goAhead()
+        } else {
+          getValue(valueGlobal)
+          clearTimeout(clear);
+          isGetData = false;
+        }
+        isSpining++
+      },2000)
     }
-
     function shuffle([...arr]) {
       let m = arr.length;
       while (m) {
@@ -160,33 +150,30 @@
       }
       return arr;
     }
-    let arr = [-1, -1, -1, 3, 4, 5, 6];
-    let randomValue = arr[Math.floor(Math.random() * arr.length)];
-    setTimeout(() => {
-      console.log(randomValue, "randomValue");
-      init(false, 5, 5,randomValue);
+    function getValue(randomValue = -1){
       let i = 0
+        init(false, 5, 2,randomValue,true);
+        for (const door of doors) {
+          i++
+          const boxes = door.querySelector(".boxes");
+          const duration = parseInt(boxes.style.transitionDuration);
+          boxes.style.transform = "translateY(0)";
+          new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        setTimeout(()=> {
+          spin()
+        },10000)
+    }
+    function goAhead(){
+      init(false, 30, 20,false);
       for (const door of doors) {
-        i++
-        const boxes = door.querySelector(".boxes");
-        const duration = parseInt(boxes.style.transitionDuration);
-        boxes.style.transform = "translateY(0)";
-        new Promise((resolve) => setTimeout(resolve, 100));
-
+          const boxes = door.querySelector(".boxes");
+          const duration = parseInt(boxes.style.transitionDuration);
+          boxes.style.transform = "translateY(0)";
+          new Promise((resolve) => setTimeout(resolve, 100));
       }
-    }, 5000);
-    init();
-  })();
-</script>
-
-<script>
-  // setInterval(() => {
-  //   document.querySelector("#spinner").click();
-  // }, 10000);
-</script>
-<script>
-  // get token
-  var token = "";
+    }
+    var token = "";
   let connectionToken = "";
   const apiUrl = "https://portal.dichvugamebai.com/api/Account/Login";
   const params = {
@@ -207,7 +194,6 @@
         .get(apiGetConnectionToken, { access_token: token })
         .then((res) => {
           connectionToken = res.data.ConnectionToken;
-          console.log(connectionToken);
           const listChats = document.querySelector(".list-chats");
           let wss =
             "wss://chat.dichvugamebai.com/signalr/connect?transport=webSockets&connectionToken=" +
@@ -217,7 +203,6 @@
           const socket = new WebSocket(wss);
           socket.onopen = () => {
             // Kết nối thành công
-            console.log("Kết nối thành công");
             socket.send(
               JSON.stringify({
                 M: "RegisterChat",
@@ -236,7 +221,8 @@
               data.M[0] &&
               data.M[0].M == "jackpotInfor"
             ) {
-              console.log(data.M[0].A[1], "jackpotInfor");
+              isGetData = true;
+              valueGlobal = data.M[0].A[1];
             }
           };
         })
@@ -247,6 +233,12 @@
     .catch((error) => {
       console.error(error);
     });
+    init();
+    spin();
+  })();
+  
+</script>
+<script>
 </script>
 
 
