@@ -8,43 +8,53 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div id="app">
-      <img style="position: relative;"  src="/bg.png" height="100vh" class="background">
-      </img>
-        <div style="position: absolute;
-        z-index: 9999;    top: calc(50% - 50px);
-" class="doors">
-          <div class="door">
-            <div class="boxes">
-              <!-- <div class="box">?</div> -->
+    <div class="main">
+      <div id="app">
+        <img style="position: relative;"  src="/bg.png"   class="background">
+        </img>
+          <div class="doors">
+            <div class="item-door">
+              <div class="door">
+                <div class="boxes">
+                  <!-- <div class="box">?</div> -->
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div class="door">
-            <div class="boxes">
-              <!-- <div class="box">?</div> -->
+            <div class="item-door">
+              <div class="door">
+                <div class="boxes">
+                  <!-- <div class="box">?</div> -->
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div class="door">
-            <div class="boxes">
-              <!-- <div class="box">?</div> -->
+            <div class="item-door">
+              <div class="door">
+                <div class="boxes">
+                  <!-- <div class="box">?</div> -->
+                </div>
+              </div>
+            </div>
+            <div class="item-door">
+              <div class="door">
+                <div class="boxes">
+                  <!-- <div class="box">?</div> -->
+                </div>
+              </div>
+            </div>
+            <div class="item-door" style="position: absolute;">
+              <div class="door" hidden >
+                <div class="boxes">
+                  <!-- <div class="box">?</div> -->
+                </div>
+              </div>
             </div>
           </div>
-          <div class="door">
-            <div class="boxes">
-              <!-- <div class="box">?</div> -->
-            </div>
-          </div>
-          <div class="door" hidden>
-            <div class="boxes">
-              <!-- <div class="box">?</div> -->
-            </div>
-          </div>
+        <div class="buttons"  hidden>
+          <button id="spinner">Play</button>
+          <button id="reseter">Reset</button>
         </div>
-      <div style="position: fixed;" class="buttons">
-        <button id="spinner">Play</button>
-        <button id="reseter">Reset</button>
       </div>
     </div>
   </body>
@@ -53,12 +63,12 @@
 <script>
   (function () {
     const items = [
-      '<img src="./1.png" width= "200px" alt="" />',
-      '<img src="./2.png" width= "200px" alt="" />',
-      '<img src="./3.png" width= "200px" alt="" />',
-      '<img src="./4.png" width= "200px" alt="" />',
-      '<img src="./5.png" width= "200px" alt="" />',
-      '<img src="./6.png" width= "200px" alt="" />',
+      '<img src="./1.png" alt="" />',
+      '<img src="./2.png" alt="" />',
+      '<img src="./3.png" alt="" />',
+      '<img src="./4.png" alt="" />',
+      '<img src="./5.png" alt="" />',
+      '<img src="./6.png" alt="" />',
     ];
     const doors = document.querySelectorAll(".door");
     let isGetData = false;
@@ -71,7 +81,7 @@
       for (const door of doors) {
         const boxes = door.querySelector(".boxes");
         const boxesClone = boxes.cloneNode(false);
-        const pool = ['<img src="./1.png" width= "200px" alt="" />'];
+        const pool = ['<img src="./1.png" alt="" />'];
 
         if (!firstInit) {
           const arr = [];
@@ -80,7 +90,7 @@
           }
           pool.push(...shuffle(arr));
           if(randomValue && randomValue != -1){
-            pool[groups * items.length] = `<img src="./${randomValue}.png" width= "200px" alt="" />` 
+            pool[groups * items.length] = `<img src="./${randomValue}.png" alt="" />` 
           }
 
           boxesClone.addEventListener(
@@ -109,8 +119,6 @@
         for (let i = pool.length - 1; i >= 0; i--) {
           const box = document.createElement("div");
           box.classList.add("box");
-          box.style.width = door.clientWidth + "px";
-          box.style.height = door.clientHeight + "px";
           box.innerHTML = pool[i];
           boxesClone.appendChild(box);
         }  
@@ -121,10 +129,9 @@
         door.replaceChild(boxesClone, boxes);
       }
     }
-    let isSpining = 1
     let valueGlobal = -1
     async function spin(value = - 1) {
-      init(false, 30, 20,false);
+      init(false, 18, 25,false);
       for (const door of doors) {
           const boxes = door.querySelector(".boxes");
           const duration = parseInt(boxes.style.transitionDuration);
@@ -139,7 +146,6 @@
           clearTimeout(clear);
           isGetData = false;
         }
-        isSpining++
       },2000)
     }
     function shuffle([...arr]) {
@@ -165,7 +171,7 @@
         },10000)
     }
     function goAhead(){
-      init(false, 30, 20,false);
+      init(false,  18, 25,false);
       for (const door of doors) {
           const boxes = door.querySelector(".boxes");
           const duration = parseInt(boxes.style.transitionDuration);
@@ -239,6 +245,35 @@
   
 </script>
 <script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    // Lấy chiều rộng của phần tử ".app .background"
+    var elementToGetWidth = document.querySelector("#app .background");
+    
+    var width = elementToGetWidth.offsetWidth;
+    console.log(elementToGetWidth);
+    // Sử dụng chiều rộng đã lấy để thiết lập cho các phần tử "#app" và ".doors"
+    var appElement = document.querySelector("#app");
+    var doorsElements = document.querySelectorAll(".doors");
+
+    // Thiết lập chiều rộng cho phần tử "#app"
+    appElement.style.width = width + "px";
+
+    // Thiết lập chiều rộng cho tất cả phần tử ".doors" (nếu có nhiều phần tử .doors)
+    doorsElements.forEach(function(doorsElement) {
+      doorsElement.style.width = width + "px";
+    });
+})
+
+function handleResize() {
+  // Thực hiện các hành động bạn muốn khi sự kiện resize xảy ra ở đây
+  // Ví dụ: Lấy chiều rộng hiện tại của cửa sổ và in ra nó
+  var windowWidth = window.innerWidth;
+  console.log("Chiều rộng của cửa sổ sau khi resize: " + windowWidth + "px");
+}
+
+// Đăng ký sự kiện resize và gắn nó với hàm xử lý handleResize
+window.addEventListener("resize", handleResize);
 </script>
 
 
