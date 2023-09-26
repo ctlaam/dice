@@ -37,6 +37,11 @@
               <!-- <div class="box">?</div> -->
             </div>
           </div>
+          <div class="door" hidden>
+            <div class="boxes">
+              <!-- <div class="box">?</div> -->
+            </div>
+          </div>
         </div>
       <div class="buttons">
         <button id="spinner">Play</button>
@@ -62,7 +67,7 @@
     document.querySelector("#reseter").addEventListener("click", init);
     const bg = document.querySelector(".background");
 
-    function init(firstInit = true, groups = 1, duration = 1000) {
+    function init(firstInit = true, groups = 1, duration = 1000,randomValue=-1) {
       bg.setAttribute("src", "./bg.png");
       let i = 0
       for (const door of doors) {
@@ -82,6 +87,10 @@
             arr.push(...items);
           }
           pool.push(...shuffle(arr));
+          if(randomValue != -1){
+            pool[30] = `<img src="./${randomValue}.png" width= "105px" alt="" />` 
+          }
+          console.log(pool, 'pool');
 
           boxesClone.addEventListener(
             "transitionstart",
@@ -131,7 +140,7 @@
     }
 
     async function spin() {
-      init(false, 5, 5);
+      init(false, 50, 50);
       let i = 0
       for (const door of doors) {
         i++
@@ -151,6 +160,21 @@
       }
       return arr;
     }
+    let arr = [-1, -1, -1, 3, 4, 5, 6];
+    let randomValue = arr[Math.floor(Math.random() * arr.length)];
+    setTimeout(() => {
+      console.log(randomValue, "randomValue");
+      init(false, 5, 5,randomValue);
+      let i = 0
+      for (const door of doors) {
+        i++
+        const boxes = door.querySelector(".boxes");
+        const duration = parseInt(boxes.style.transitionDuration);
+        boxes.style.transform = "translateY(0)";
+        new Promise((resolve) => setTimeout(resolve, 100));
+
+      }
+    }, 5000);
     init();
   })();
 </script>
@@ -227,10 +251,4 @@
 
 
 <!-- test -->
-<script>
-let arr = [-1, 1, 2, 3, 4, 5, 6];
-let randomValue = arr[Math.floor(Math.random() * arr.length)];
-setTimeout(() => {
-  
-}, 5000);
-</script>
+
