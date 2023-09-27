@@ -121,11 +121,10 @@ body {
   height: 100vh;
 }
 .doors {
-
   display: flex;
   position: absolute;
   z-index: 9999;
-  top: calc(50% - 12vh);
+  top: calc(50% - 10vh);
   box-sizing: border-box;
   width: 85%;
 }
