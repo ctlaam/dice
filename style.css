@@ -121,12 +121,13 @@ body {
   height: 100vh;
 }
 .doors {
+  width: calc(var(--height-screen) * 1.8);
   display: flex;
   position: absolute;
   z-index: 9999;
   top: calc(50% - 10vh);
   box-sizing: border-box;
-  width: 85%;
+  justify-content: space-between;
 }
 .item-door {
   width: 25%;
@@ -134,11 +135,10 @@ body {
   justify-content: center;
 }
 .door {
-  height: calc(var(--height-screen) / 3.2);
-  height: 300px;
-  width: calc(var(--height-screen) / 3.4);
+  height: calc(var(--height-screen) / 2.8);
+  width: calc(var(--height-screen) / 3.2);
   overflow: hidden;
-  border-radius:30px;
+  border-radius:28px;
 }
 
 .boxes {
@@ -149,11 +149,11 @@ body {
   flex-direction: column;
 }
 .door img {
-  width: calc(var(--height-screen) / 3.4);
+  width: calc(var(--height-screen) / 3.2);
 }
 
 .box {
-  width: calc(var(--height-screen) / 3.4);
+  width: calc(var(--height-screen) / 3.2);
 
   display: flex;
   justify-content: center;
