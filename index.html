@@ -181,18 +181,21 @@
           new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
-    var token = "";
+  var token = "";
   let connectionToken = "";
   const apiUrl = "https://portal.dichvugamebai.com/api/Account/Login";
   const params = {
     LoginType: "1",
-    UserName: "taking103",
+    UserName: "xocdialivechat",
     Password: "123456a",
     DeviceId: "1",
     DeviceType: "1",
   };
+  let socket
+  let retryInterval;
   // Sử dụng Axios để gửi yêu cầu GET
-  axios
+  function connectWebSocket() {
+    axios
     .post(apiUrl, params)
     .then((response) => {
       token = response.data.Token;
@@ -208,9 +211,15 @@
             encodeURIComponent(connectionToken) +
             "&connectionData=[{%27name%27:%27chatHub%27}]&tid=19&access_token=" +
             token;
-          const socket = new WebSocket(wss);
+          socket = new WebSocket(wss);
           socket.onopen = () => {
             // Kết nối thành công
+            console.log('kết nối thành công');
+            if (retryInterval) {
+              init();
+              spin();
+              clearInterval(retryInterval);
+            }
             socket.send(
               JSON.stringify({
                 M: "RegisterChat",
@@ -233,14 +242,27 @@
               valueGlobal = data.M[0].A[1];
             }
           };
+          socket.onclose = (event) => {
+            console.log('kết nối đóng');
+            retryInterval = setInterval(() => {
+              connectWebSocket();
+            }, 5000);
+          };
+          // Xử lý lỗi nếu có
+          socket.onerror = (error) => {
+            console.error('Lỗi WebSocket: ' + error);
+          };  
         })
         .catch((err) => {
           console.log(err);
         });
-    })
+    })  
     .catch((error) => {
       console.error(error);
     });
+  }
+    connectWebSocket()
+    // Thử lại kết nối sau mỗi 5 giây bằng setInterval
     init();
     spin();
   })();
